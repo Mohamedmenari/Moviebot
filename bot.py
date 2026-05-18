@@ -2,14 +2,10 @@ import os
 import requests
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
-from flask import Flask, request
 from bs4 import BeautifulSoup
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "YOUR_BOT_TOKEN")
-WEBHOOK_URL = os.environ.get("WEBHOOK_URL", "")  # e.g. https://your-app.onrender.com
-
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 bot = telebot.TeleBot(BOT_TOKEN)
-app = Flask(__name__)
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
@@ -100,36 +96,6 @@ def handle_movie(message):
     )
 
 
-# ── Flask / Webhook ──────────────────────────────────────────────────────────
-
-@app.route("/", methods=["GET"])
-def index():
-    return "Bot is running! 🎬", 200
-
-
-@app.route(f"/{BOT_TOKEN}", methods=["POST"])
-def webhook():
-    json_data = request.get_json()
-    update = telebot.types.Update.de_json(json_data)
-    bot.process_new_updates([update])
-    return "OK", 200
-
-
-def set_webhook():
-    if WEBHOOK_URL:
-        url = f"{WEBHOOK_URL}/{BOT_TOKEN}"
-        bot.remove_webhook()
-        bot.set_webhook(url=url)
-        print(f"Webhook set: {url}")
-    else:
-        print("No WEBHOOK_URL set — running in polling mode")
-        bot.remove_webhook()
-        bot.polling()
-
-
 if __name__ == "__main__":
-    if WEBHOOK_URL:
-        set_webhook()
-        app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-    else:
-        bot.polling(none_stop=True)
+    print("Bot started (polling)...")
+    bot.infinity_polling()
