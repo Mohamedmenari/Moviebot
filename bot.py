@@ -4,7 +4,7 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from bs4 import BeautifulSoup
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "8885327111:AAFDRRrmn25KbpXh1yb3e-BPbrW8Pv1ulDA")
 bot = telebot.TeleBot(BOT_TOKEN)
 
 HEADERS = {
